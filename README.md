@@ -80,8 +80,8 @@ export default class extends ApiController {
 ```
 
 Note: actually extends `ApiController` is optional, however if we do, we can use
-`useMiddleware()` method in the controller, which will be explained in the
-following sections.
+the `use()` method in the controller, which will be explained in the following
+sections.
 
 ## Method Support
 
@@ -108,10 +108,10 @@ must be accessed via the `req` object.
 
 ## Middleware Support
 
-In a controller, we can use `useMiddleware()` method or the `@useMiddleware`
-decorator to bind middleware.
+In a controller, we can use the `use()` method or the `@use` decorator to bind
+middleware.
 
-1. `useMiddleware()`
+1. `use()`
 
 This method must be used in the constructor of a controller, for example:
 
@@ -124,12 +124,12 @@ export default class extends ApiController {
     constructor(req, res) {
         super(req, res);
 
-        this.useMiddleware(expressSession());
+        this.use(expressSession());
 
         // Unlike traditional express middleware, we can actually wait for
         // the execution of the next middleware, and gets its returning value,
         // for example:
-        this.useMiddleware(async (req, res, next) => {
+        this.use(async (req, res, next) => {
             const returns = await next();
             // ...
         });
@@ -137,19 +137,19 @@ export default class extends ApiController {
 }
 ```
 
-2. `@useMiddleware`
+2. `@use`
 
 This decorator is used directly on the controller method, for example
 
 ```ts
-import { api, ApiController } from "next-controller";
+import { api, ApiController, use } from "next-controller";
 import * as multer from "multer";
 
 const upload = multer({ dest: 'uploads/' });
 
 @api
 export default class extends ApiController {
-    @useMiddleware(upload.single("avatar"))
+    @use(upload.single("avatar"))
     async post(body: object) {
         // `this.req.file` will be the `avatar` file.
     }
@@ -157,10 +157,11 @@ export default class extends ApiController {
 ```
 
 
-Note: the difference between `useMiddleware()` and `@useMiddleware` is that
-the former binds the middleware to all available methods, and the later only
-binds to the current method. If both methods are used, their order are
-respected as the same order as the above examples'.
+Note: the difference between `use()` and `@use` is that the former binds the
+middleware to all available methods, and the later only binds to the current
+method. If both methods are used, their order are respected as the same order as
+the above examples'. Also, the middleware bound by `use()` have access to the
+controller instance, which may be useful for some scenarios.
 
 ## Client-side Support
 
@@ -266,3 +267,46 @@ export default function Example() {
 
 Note: if the server throw some error other than an HttpException, on the client
 side, it will be automatically transferred to an HttpException with code `500`.
+
+## Global Catch
+
+If all the middleware are written with the signature `(req, res, next) => any`
+and all the `next()` functions all called with `await`, then we can use the
+simple solution to catch errors globally in the controller:
+
+```ts
+@api
+export default class extends ApiController {
+    constructor(req, res) {
+        super(req, res);
+
+        this.use(async (req, res, next) => {
+            try {
+                await next();
+            } catch (err) {
+                if (!(err instanceof HttpException)) {
+                    console.error(err);
+                }
+            }
+        });
+
+        this.use(/* other middleware */);
+    }
+}
+```
+
+However, sometimes this is not guaranteed, especially when using some middleware
+from Express ecosystem. So to catch errors globally, we can instead implement an
+`onError()` method in the controller, it will catch any potential error no
+matter how the middleware is written.
+
+```ts
+@api
+export default class extends ApiController {
+    onError(err: any) {
+        if (!(err instanceof HttpException)) {
+            console.error(err);
+        }
+    }
+}
+```

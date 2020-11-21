@@ -18,10 +18,12 @@ export default class ApiController {
         protected res: ServerResponse
     ) { }
 
-    useMiddleware(middleware: Middleware) {
+    use(middleware: Middleware) {
         this._middleware.push(middleware);
         return this;
     }
+
+    onError?(err: any): void;
 
     static async __invoke(req: IncomingMessage, res: ServerResponse) {
         const method = req.method.toLowerCase();
@@ -50,7 +52,7 @@ export default class ApiController {
         }
 
         if (isOwnKey(this, Symbol.for("middleware"))) {
-            // If `@useMiddleware` has never been used on the controller,
+            // If `@use` has never been used on the controller,
             // `this[Symbol.for("middleware")]` could be missing.
             middleware.push(...(this[Symbol.for("middleware")][method] || []));
         }
@@ -122,32 +124,42 @@ export default class ApiController {
             }
         });
 
-        applyMiddleware(middleware, req, res);
+        applyMiddleware.call(ins, middleware, req, res);
     }
 }
 
 function applyMiddleware(
+    this: ApiController,
     middleware: Middleware[],
     req: IncomingMessage,
     res: ServerResponse,
 ) {
+    const $this = this;
     let i = 0;
 
     // Recursively invokes all the middleware.
     (async function next() {
-        // Express `next(err)`
-        if (arguments.length &&
-            (arguments[0] instanceof Error || typeof arguments[0] === "string")
-        ) {
-            throw arguments[0];
-        }
+        try {
+            // Express `next(err)`
+            if (arguments.length &&
+                (arguments[0] instanceof Error || typeof arguments[0] === "string")
+            ) {
+                throw arguments[0];
+            }
 
-        const handle = middleware[i++];
+            const handle = middleware[i++];
 
-        if (handle?.length === 4) { // Express `(err, req, res, next) => void`
-            return await handle.call(void 0, null, req, res, next);
-        } else if (handle) {
-            return await handle(req, res, next);
+            if (handle?.length === 4) { // Express `(err, req, res, next) => void`
+                return await handle.call(void 0, null, req, res, next);
+            } else if (handle) {
+                return await handle(req, res, next);
+            }
+        } catch (err) {
+            if (typeof $this.onError === "function") {
+                $this.onError(err);
+            } else {
+                throw err;
+            }
         }
     })();
 }
