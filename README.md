@@ -119,12 +119,14 @@ This method must be used in the constructor of a controller, for example:
 import { api, ApiController } from "next-controller";
 import * as expressSession from "express-session";
 
+const session = expressSession();
+
 @api
 export default class extends ApiController {
     constructor(req, res) {
         super(req, res);
 
-        this.use(expressSession());
+        this.use(session);
 
         // Unlike traditional express middleware, we can actually wait for
         // the execution of the next middleware, and gets its returning value,
