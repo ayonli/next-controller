@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "An api controller wrapper for Next.js framework.",
   "main": "dist/index.js",
+  "types": "src/index.ts",
   "scripts": {
     "test": "mocha"
   },
@@ -21,5 +22,14 @@
   "bugs": {
     "url": "https://github.com/hyurl/next-controller/issues"
   },
-  "homepage": "https://github.com/hyurl/next-controller#readme"
+  "homepage": "https://github.com/hyurl/next-controller#readme",
+  "dependencies": {
+    "@hyurl/utils": "^0.2.8",
+    "@types/qs": "^6.9.5",
+    "js-magic": "^1.2.1",
+    "qs": "^6.9.4"
+  },
+  "devDependencies": {
+    "@types/node": "^14.14.9"
+  }
 }

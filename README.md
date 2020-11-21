@@ -79,6 +79,10 @@ export default class extends ApiController {
 }
 ```
 
+Note: actually extends `ApiController` is optional, however if we do, we can use
+`useMiddleware()` method in the controller, which will be explained in the
+following sections.
+
 ## Method Support
 
 All major HTTP request methods are supported in the ApiController, but be aware
@@ -89,7 +93,7 @@ that their signatures are different.
 export default class extends ApiController {
     async delete(query: object, body: any): Promise<any>;
     async get(query: object): Promise<any>;
-    async head(): Promise<void>;
+    async head(query: object): Promise<void>;
     async options(query: object): Promise<any>;
     async patch(query: object, body: any): Promise<any>;
     async post(body: any): Promise<any>; // use `this.req.query` to access the query object if must.
@@ -153,7 +157,9 @@ export default class extends ApiController {
 ```
 
 
-Note: if both `useMiddleware()` and `@useMiddleware` are used, their order are
+Note: the difference between `useMiddleware()` and `@useMiddleware` is that
+the former binds the middleware to all available methods, and the later only
+binds to the current method. If both methods are used, their order are
 respected as the same order as the above examples'.
 
 ## Client-side Support

@@ -1,0 +1,30 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es2015",
+        "preserveConstEnums": true,
+        "rootDir": "src/",
+        "outDir": "dist/",
+        "experimentalDecorators": true,
+        "newLine": "LF",
+        "noUnusedParameters": true,
+        "noUnusedLocals": true,
+        "importHelpers": true,
+        "pretty": true,
+        "removeComments": true,
+        "sourceMap": true,
+        "noImplicitThis": true,
+        "lib": [
+            "ES2015",
+            "ES2016.Array.Include",
+            "DOM"
+        ]
+    },
+    "files": [
+        "./src/index.ts"
+    ],
+    "exclude": [
+        "./test/*",
+        "./node_modules/*"
+    ]
+}
