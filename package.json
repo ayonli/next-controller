@@ -1,0 +1,25 @@
+{
+  "name": "next-controller",
+  "version": "1.0.0",
+  "description": "An api controller wrapper for Next.js framework.",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hyurl/next-controller.git"
+  },
+  "keywords": [
+    "next.js",
+    "api",
+    "controller",
+    "mvc"
+  ],
+  "author": "A-yon <i@hyurl.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hyurl/next-controller/issues"
+  },
+  "homepage": "https://github.com/hyurl/next-controller#readme"
+}
