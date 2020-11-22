@@ -20,9 +20,9 @@ before(async () => {
         }
     });
 
-    await new Promise(resolve => server.listen(3000, resolve));
+    await new Promise(resolve => server.listen(3000, () => resolve(void 0)));
 });
 
 after(async () => {
-    await new Promise(resolve => server.close(resolve));
+    await new Promise(resolve => server.close(() => resolve(void 0)));
 });
