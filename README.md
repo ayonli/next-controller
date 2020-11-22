@@ -4,18 +4,18 @@ An api controller wrapper for Next.js framework.
 
 ## Why Using This Package?
 
-Next.js has a special way to write API backend logics by exporting a default
-function in the files under `pages/api` directory, which follows the React
-preference. It's simpler, but headache, we'll have to write all logics inside
-one single function, and handing all possible HTTP request methods, which might
-not be annoying at first, be it can be a real drawback when our program becomes
-big.
+Next.js provides a special way to write API backend logics by exporting a
+default function in the files under `pages/api` directory, which follows the
+React preference. It's simpler, but headache, we'll have to write all logics
+inside one single function, and handing all possible HTTP request methods, which
+might not be annoying at first, be it can be a real drawback when our program
+becomes big.
 
-So this package is meant to solve this problem, it provides an elegant wrapper
-that allows us writing our backend code in a more traditional MVC controller way,
-and provides straight forward support of middleware, which is compatible with
-the Express framework, so we can use Express middleware directly in Next.js
-program.
+Hence, this package is meant to solve this problem, it provides an elegant
+wrapper that allows us writing our backend code in a more traditional MVC
+controller way, and provides straight forward support of middleware, which is
+fully compatible with the Express ecosystem, meaning we can use Express
+middleware directly in Next.js program.
 
 ## Install
 
@@ -89,15 +89,14 @@ All major HTTP request methods are supported in the ApiController, but be aware
 that their signatures are different.
 
 ```ts
-@api
-export default class extends ApiController {
-    async delete(query: object, body: any): Promise<any>;
-    async get(query: object): Promise<any>;
-    async head(query: object): Promise<void>;
-    async options(query: object): Promise<any>;
-    async patch(query: object, body: any): Promise<any>;
-    async post(body: any): Promise<any>; // use `this.req.query` to access the query object if must.
-    async put(query: object, body: any): Promise<any>;
+declare interface ApiController {
+    delete?(query: object, body?: any): Promise<any>;
+    get?(query: object): Promise<any>;
+    head?(query: object): Promise<void>;
+    options?(query: object): Promise<any>;
+    patch?(query: object, body: any): Promise<any>;
+    post?(body: any): Promise<any>; // use `this.req.query` to access the query object if must.
+    put?(query: object, body: any): Promise<any>;
 }
 ```
 

@@ -14,6 +14,8 @@ export default class HttpException extends Error {
         }
 
         super(message);
+
+        Object.defineProperty(this, "name", { value: "HttpException" });
         Object.defineProperty(this, "code", { value: code });
     }
 

@@ -2,7 +2,7 @@ import * as qs from "qs";
 import isEmpty from "@hyurl/utils/isEmpty";
 import HttpException from "./HttpException";
 
-export default function useApi<T extends Function>(path: string, base = ""): T {
+export default function useApi<T>(path: string, base = ""): T {
     const url = base + "/api/" + path;
 
     return {
@@ -22,33 +22,32 @@ async function callApi(
     query: object,
     body = void 0
 ) {
-    const reqHeaders = {};
+    const headers = {};
 
     if (!isEmpty(query)) {
         url += "?" + qs.stringify(query);
     }
 
     if (typeof body === "object") {
-        if (!(body instanceof FormData)) {
-            reqHeaders["Content-Type"] = "application/json; charset=utf-8";
+        if (typeof FormData !== "function" || !(body instanceof FormData)) {
+            headers["Content-Type"] = "application/json; charset=utf-8";
+            body = JSON.stringify(body);
         }
     } else if (body !== void 0) {
-        reqHeaders["Content-Type"] = "text/plain; charset=utf-8";
+        headers["Content-Type"] = "text/plain; charset=utf-8";
+        body = String(body);
     }
 
-    const res = await fetch(url, {
-        method,
-        headers: reqHeaders,
-        body
-    });
-    const resHeaders = res.headers;
-    const resType: string = resHeaders["Content-Type"]
-        || resHeaders["content-type"];
+    const trace: { stack?: string; } = {};
+    Error.captureStackTrace(trace);
+
+    const res = await fetch(url, { method, headers, body });
+    let err: Error;
 
     if (res.status < 400) {
         let returns: any;
 
-        if (resType?.includes("json")) {
+        if (res.headers.get("Content-Type")?.includes("json")) {
             returns = await res.json();
         } else {
             returns = await res.text();
@@ -56,11 +55,16 @@ async function callApi(
 
         return returns;
     } else if (res.status === 405) {
-        throw new ReferenceError(
+        err = new ReferenceError(
             `ApiController.${method.toLowerCase()} is not implemented`);
     } else {
-        throw new HttpException(
+        err = new HttpException(
             res.statusText || (await res.text()) || "Unknown",
             res.status);
     }
+
+    // Append stack trace
+    err.stack = err.stack + "\n" + trace.stack.split("\n").slice(5).join("\n");
+
+    throw err;
 }

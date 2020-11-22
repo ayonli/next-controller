@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "module": "commonjs",
-        "target": "es2015",
+        "target": "es2017",
         "preserveConstEnums": true,
         "rootDir": "src/",
         "outDir": "dist/",
@@ -14,9 +14,9 @@
         "removeComments": true,
         "sourceMap": true,
         "noImplicitThis": true,
+        "declaration": true,
         "lib": [
-            "ES2015",
-            "ES2016.Array.Include",
+            "ES2017",
             "DOM"
         ]
     },

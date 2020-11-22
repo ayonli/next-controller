@@ -23,18 +23,17 @@ export default class ApiController {
         return this;
     }
 
+    delete?(query: object, body?: any): Promise<any>;
+    get?(query: object): Promise<any>;
+    head?(query: object): Promise<void>;
+    options?(query: object): Promise<any>;
+    patch?(query: object, body: any): Promise<any>;
+    post?(body: any): Promise<any>;
+    put?(query: object, body: any): Promise<any>;
     onError?(err: any): void;
 
     static async __invoke(req: IncomingMessage, res: ServerResponse) {
-        const method = req.method.toLowerCase();
         let query: object = req["query"];
-
-        if (!isOwnMethod(this.prototype, method)) {
-            res.statusCode = 405;
-            res.statusMessage = HttpStatus[405];
-            res.end(res.statusMessage);
-            return;
-        }
 
         if (!query) {
             let url = new URL(req.url, "http://localhost");
@@ -42,6 +41,14 @@ export default class ApiController {
         }
 
         const ins = new this(req, res);
+        const method = req.method.toLowerCase();
+
+        if (!isOwnMethod(ins, method)) {
+            res.statusCode = 405;
+            res.statusMessage = HttpStatus[405];
+            res.end(res.statusMessage);
+            return;
+        }
 
         const middleware: Middleware[] = [];
 
@@ -72,7 +79,7 @@ export default class ApiController {
                 }
 
                 if (method === "head") {
-                    res.end;
+                    res.end();
                     return returns;
                 }
 
@@ -105,7 +112,7 @@ export default class ApiController {
             } catch (err) {
                 if (err instanceof Error) {
                     if (err.name === "HttpException") {
-                        res.statusCode = Number(err["code"]);
+                        res.statusCode = Number(err["code"]) || 500;
                     } else {
                         res.statusCode = 500;
                     }
