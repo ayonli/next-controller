@@ -11,7 +11,7 @@ inside one single function, and handing all possible HTTP request methods, which
 might not be annoying at first, be it can be a real drawback when our program
 becomes big.
 
-Hence, this package is meant to solve this problem, it provides an elegant
+Hence, `next-controller` is meant to solve this problem, it provides an elegant
 wrapper that allows us writing our backend code in a more traditional MVC
 controller way, and provides straight forward support of middleware, which is
 fully compatible with the Express ecosystem, meaning we can use Express
@@ -39,11 +39,18 @@ working directory, and put the following content in it.
 
 ```json
 {
-  "plugins": [
-    ["@babel/plugin-proposal-decorators", { "legacy": true }]
-  ]
+    "presets": [
+        "next/babel",
+        "@babel/preset-typescript"
+    ],
+    "plugins": [
+        [ "@babel/plugin-proposal-decorators", { "legacy": true } ]
+    ]
 }
 ```
+
+Then use the command `npm i -D @babel/plugin-proposal-decorators` to install the
+plugin as a development dependency.
 
 ## Example
 
