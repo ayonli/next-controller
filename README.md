@@ -4,18 +4,23 @@ An api controller wrapper for Next.js framework.
 
 ## Why Using This Package?
 
-Next.js provides a special way to write API backend logics by exporting a
-default function in the files under `pages/api` directory, which follows the
-React preference. It's simpler, but headache, we'll have to write all logics
-inside one single function, and handing all possible HTTP request methods, which
-might not be annoying at first, be it can be a real drawback when our program
-becomes big.
+Next.js is an awesome framework, however it provides a naive way to write API
+backend logics via a single function. It's simpler, but headache, we'll have to
+write all logics inside one single function, and handing all possible HTTP
+request methods, it might not be annoying at first, be it can be a real
+drawback when our program becomes big.
 
 Hence, `next-controller` is meant to solve this problem, it provides an elegant
 wrapper that allows us writing our backend code in a more traditional MVC
 controller way, and provides straight forward support of middleware, which is
 fully compatible with the Express ecosystem, meaning we can use Express
-middleware directly in Next.js program.
+middleware directly in a Next.js program.
+
+## Does This Break Old Code?
+
+No, using this package will not alter any behavior of our existing program, in
+fact, it transforms the controller class to act like a regular function at
+run-time, but not like a regular function, it's all object-oriented.
 
 ## Install
 
@@ -279,7 +284,7 @@ side, it will be automatically transferred to an HttpException with code `500`.
 ## Global Catch
 
 If all the middleware are written with the signature `(req, res, next) => any`
-and all the `next()` functions all called with `await`, then we can use the
+and all the `next()` functions are called with `await`, then we can use the
 simple solution to catch errors globally in the controller:
 
 ```ts
