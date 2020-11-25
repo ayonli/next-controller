@@ -1,6 +1,6 @@
 # Next-Controller
 
-An api controller wrapper for Next.js framework.
+An API/MVC controller wrapper for Next.js framework.
 
 ## Why Using This Package?
 
