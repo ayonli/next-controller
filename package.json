@@ -5,6 +5,7 @@
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
+    "postinstall": "tsc",
     "pretest": "tsc && tsc -p test",
     "test": "mocha test/.build"
   },
