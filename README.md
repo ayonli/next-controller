@@ -4,9 +4,9 @@ Elegant API/MVC controller wrapper for Next.js framework.
 
 ## Why Using This Package?
 
-Next.js is an awesome framework, however it provides a naive way to write API
-backend logics via a single function. It's simpler, but headache, we'll have to
-write all logics inside one single function, and handing all possible HTTP
+Next.js is an awesome framework, however it provides a primitive way to write
+API backend logics via a single function. It's simpler, but headache, we'll have
+to write all logics inside one single function, and handing all possible HTTP
 request methods, it might not be annoying at first, be it can be a real
 drawback when our program becomes big.
 
