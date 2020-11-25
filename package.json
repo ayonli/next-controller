@@ -17,7 +17,8 @@
     "next.js",
     "api",
     "controller",
-    "mvc"
+    "mvc",
+    "middleware"
   ],
   "author": "A-yon <i@hyurl.com>",
   "license": "MIT",
