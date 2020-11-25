@@ -1,7 +1,7 @@
 {
   "name": "next-controller",
   "version": "1.0.1",
-  "description": "An API and MVC controller wrapper for Next.js framework.",
+  "description": "Elegant API/MVC controller wrapper for Next.js framework.",
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {

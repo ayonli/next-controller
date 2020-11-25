@@ -1,6 +1,6 @@
 # Next-Controller
 
-An API/MVC controller wrapper for Next.js framework.
+Elegant API/MVC controller wrapper for Next.js framework.
 
 ## Why Using This Package?
 
@@ -98,7 +98,7 @@ sections.
 ## Method Support
 
 All major HTTP request methods are supported in the ApiController, but be aware
-that their signatures are different.
+that their signatures vary.
 
 ```ts
 declare interface ApiController {
