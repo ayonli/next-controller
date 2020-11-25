@@ -20,8 +20,8 @@
             "DOM"
         ]
     },
-    "files": [
-        "./src/index.ts"
+    "include": [
+        "./src/*.ts"
     ],
     "exclude": [
         "./test/*",
