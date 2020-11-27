@@ -32,6 +32,8 @@ export default class ApiController {
     put?(query: object, body: any): Promise<any>;
     onError?(err: any): void;
 
+    static onError?(err: any): void;
+
     static async __invoke(req: IncomingMessage, res: ServerResponse) {
         let query: object = req["query"];
 
@@ -139,42 +141,42 @@ export default class ApiController {
             }
         });
 
-        await applyMiddleware.call(ins, middleware, req, res);
+        try {
+            await applyMiddleware.call(ins, middleware, req, res);
+        } catch (err) {
+            if (typeof ins.onError === "function") {
+                ins.onError(err);
+            } else if (typeof this.onError === "function") {
+                this.onError(err);
+            } else if (err["name"] !== "HttpException") {
+                throw err;
+            }
+        }
     }
 }
 
 async function applyMiddleware(
-    this: ApiController,
     middleware: Middleware[],
     req: IncomingMessage,
     res: ServerResponse,
 ) {
-    const $this = this;
     let i = 0;
 
     // Recursively invokes all the middleware.
     await (async function next() {
-        try {
-            // Express `next(err)`
-            if (arguments.length &&
-                (arguments[0] instanceof Error || typeof arguments[0] === "string")
-            ) {
-                throw arguments[0];
-            }
+        // Express `next(err)`
+        if (arguments.length &&
+            (arguments[0] instanceof Error || typeof arguments[0] === "string")
+        ) {
+            throw arguments[0];
+        }
 
-            const handle = middleware[i++];
+        const handle = middleware[i++];
 
-            if (handle?.length === 4) { // Express `(err, req, res, next) => void`
-                return await handle.call(void 0, null, req, res, next);
-            } else if (handle) {
-                return await handle(req, res, next);
-            }
-        } catch (err) {
-            if (typeof $this.onError === "function") {
-                $this.onError(err);
-            } else {
-                throw err;
-            }
+        if (handle?.length === 4) { // Express `(err, req, res, next) => void`
+            return await handle.call(void 0, null, req, res, next);
+        } else if (handle) {
+            return await handle(req, res, next);
         }
     })();
 }
