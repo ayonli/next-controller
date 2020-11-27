@@ -70,7 +70,7 @@ export default class ApiController {
                 let returns: any;
 
                 // Invoke the handler method can get its returning value.
-                if (method === "get" || returns === "head") {
+                if (method === "get" || method === "head") {
                     returns = await ins[method](query);
                 } else if (method === "post") {
                     returns = await ins[method](req["body"]);
@@ -91,19 +91,27 @@ export default class ApiController {
                     "number",
                     "object"
                 ].includes(typeof returns)) {
-                    if (!isResponseTypeSet) {
-                        res.setHeader("Content-Type",
-                            "application/json; charset=utf-8");
-                    }
+                    if (typeof res["send"] === "function") {
+                        res["send"](returns);
+                    } else {
+                        if (!isResponseTypeSet) {
+                            res.setHeader("Content-Type",
+                                "application/json; charset=utf-8");
+                        }
 
-                    res.end(JSON.stringify(returns));
+                        res.end(JSON.stringify(returns));
+                    }
                 } else if (returns !== void 0) {
                     if (!isResponseTypeSet) {
                         res.setHeader("Content-Type",
                             "text/plain; charset=utf-8");
                     }
 
-                    res.end(String(returns));
+                    if (typeof res["send"] === "function") {
+                        res["send"](String(returns));
+                    } else {
+                        res.end(String(returns));
+                    }
                 }
 
                 // Returns the returning values so the previous middleware
@@ -131,11 +139,11 @@ export default class ApiController {
             }
         });
 
-        applyMiddleware.call(ins, middleware, req, res);
+        await applyMiddleware.call(ins, middleware, req, res);
     }
 }
 
-function applyMiddleware(
+async function applyMiddleware(
     this: ApiController,
     middleware: Middleware[],
     req: IncomingMessage,
@@ -145,7 +153,7 @@ function applyMiddleware(
     let i = 0;
 
     // Recursively invokes all the middleware.
-    (async function next() {
+    await (async function next() {
         try {
             // Express `next(err)`
             if (arguments.length &&
