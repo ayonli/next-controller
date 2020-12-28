@@ -2,6 +2,9 @@ import * as qs from "qs";
 import isEmpty from "@hyurl/utils/isEmpty";
 import HttpException from "./HttpException";
 
+// polyfill
+Error.captureStackTrace ??= require("capture-stack-trace");
+
 export default function useApi<T>(
     path: string,
     base = "",
