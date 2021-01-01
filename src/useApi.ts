@@ -1,5 +1,4 @@
 import * as qs from "qs";
-import isEmpty from "@hyurl/utils/isEmpty";
 import HttpException from "./HttpException";
 
 // polyfill
@@ -31,9 +30,11 @@ async function callApi(
 ) {
     const { method, headers = {} } = options;
 
-    if (!isEmpty(query)) {
-        url += "?" + qs.stringify(query);
-    }
+    url += qs.stringify(query, {
+        allowDots: true,
+        encodeValuesOnly: true,
+        addQueryPrefix: true,
+    });
 
     if (typeof body === "object") {
         if (typeof FormData !== "function" || !(body instanceof FormData)) {

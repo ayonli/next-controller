@@ -35,11 +35,14 @@ export default class ApiController {
     static onError?(err: any): void;
 
     static async __invoke(req: IncomingMessage, res: ServerResponse) {
-        let query: object = req["query"];
+        let query: object;
 
         if (!query) {
             let url = new URL(req.url, "http://localhost");
-            query = req["query"] = qs.parse(url.search?.slice(1) || "");
+            query = req["query"] = qs.parse(url.search?.slice(1) || "", {
+                ignoreQueryPrefix: true,
+                allowDots: true,
+            });
         }
 
         const ins = new this(req, res);
