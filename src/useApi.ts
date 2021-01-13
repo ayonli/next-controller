@@ -34,6 +34,7 @@ async function callApi(
         allowDots: true,
         encodeValuesOnly: true,
         addQueryPrefix: true,
+        strictNullHandling: true,
     });
 
     if (typeof body === "object") {

@@ -42,6 +42,7 @@ export default class ApiController {
             query = req["query"] = qs.parse(url.search?.slice(1) || "", {
                 ignoreQueryPrefix: true,
                 allowDots: true,
+                strictNullHandling: true,
             });
         }
 
