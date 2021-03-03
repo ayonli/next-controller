@@ -124,6 +124,8 @@ export default class ApiController {
                 // can await for it.
                 return returns;
             } catch (err) {
+                res.setHeader("Content-Type", "text/plain; charset=utf-8");
+
                 if (err instanceof Error) {
                     if (err.name === "HttpException") {
                         res.statusCode = Number(err["code"]) || 500;
