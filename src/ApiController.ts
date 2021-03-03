@@ -131,11 +131,11 @@ export default class ApiController {
                         res.statusCode = 500;
                     }
 
-                    res.statusMessage = err.message;
+                    res.statusMessage = HttpStatus[res.statusCode];
                     res.end(err.message);
                 } else {
                     res.statusCode = 500;
-                    res.statusMessage = String(err);
+                    res.statusMessage = HttpStatus[res.statusCode];
                     res.end(String(err));
                 }
 

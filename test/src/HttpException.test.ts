@@ -15,7 +15,6 @@ describe("HttpException", () => {
         }
 
         assert.strictEqual(res.status, 400);
-        assert.strictEqual(res.statusText, "Something went wrong");
         assert.strictEqual(res.data, "Something went wrong");
     });
 

@@ -68,7 +68,7 @@ async function callApi(
             `ApiController.${method.toLowerCase()} is not implemented`);
     } else {
         err = new HttpException(
-            res.statusText || (await res.text()) || "Unknown",
+            (await res.text()) || res.statusText || "Unknown",
             res.status);
     }
 
