@@ -1,7 +1,6 @@
 import * as qs from "qs";
 import type { IncomingMessage, ServerResponse } from "http";
 import isOwnKey from "@hyurl/utils/isOwnKey";
-import isOwnMethod from "@hyurl/utils/isOwnMethod";
 import { HttpStatus } from "./HttpException";
 
 export type Middleware = (
@@ -49,7 +48,7 @@ export default class ApiController {
         const ins = new this(req, res);
         const method = req.method.toLowerCase();
 
-        if (!isOwnMethod(ins, method)) {
+        if (typeof ins[method] !== "function") {
             res.statusCode = 405;
             res.statusMessage = HttpStatus[405];
             res.end(res.statusMessage);
