@@ -102,13 +102,13 @@ that their signatures vary.
 
 ```ts
 declare interface ApiController {
-    delete?(query: object, body?: any): Promise<any>;
-    get?(query: object): Promise<any>;
-    head?(query: object): Promise<void>;
-    options?(query: object): Promise<any>;
-    patch?(query: object, body: any): Promise<any>;
-    post?(body: any): Promise<any>; // use `this.req.query` to access the query object if must.
-    put?(query: object, body: any): Promise<any>;
+    delete?(query: object, body?: any, headers?: HeadersInit): Promise<any>;
+    get?(query: object, headers?: HeadersInit): Promise<any>;
+    head?(query: object, headers?: HeadersInit): Promise<void>;
+    options?(query: object, headers?: HeadersInit): Promise<any>;
+    patch?(query: object, body: any, headers?: HeadersInit): Promise<any>;
+    post?(body: any, headers?: HeadersInit): Promise<any>; // use `this.req.query` to access the query object if must.
+    put?(query: object, body: any, headers?: HeadersInit): Promise<any>;
 }
 ```
 

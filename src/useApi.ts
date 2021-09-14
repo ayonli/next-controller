@@ -27,6 +27,7 @@ async function callApi(
     options: Omit<RequestInit, "body"> = {},
     query: object,
     body = void 0,
+    extraHeaders: HeadersInit = {}
 ) {
     const { method, headers = {} } = options;
 
@@ -36,6 +37,11 @@ async function callApi(
         addQueryPrefix: true,
         strictNullHandling: true,
     });
+
+    if (["GET", "HEAD", "OPTIONS"].includes(method) && body) {
+        extraHeaders = body;
+        body = void 0;
+    }
 
     if (typeof body === "object") {
         if (typeof FormData !== "function" || !(body instanceof FormData)) {
@@ -50,7 +56,12 @@ async function callApi(
     const trace: { stack?: string; } = {};
     Error.captureStackTrace(trace);
 
-    const res = await fetch(url, { ...options, method, headers, body });
+    const res = await fetch(url, {
+        ...options,
+        method,
+        headers: { ...headers, ...extraHeaders },
+        body
+    });
     let err: Error;
 
     if (res.status < 400) {
