@@ -55,22 +55,8 @@ export default class ApiController {
             return;
         }
 
-        const middleware: Middleware[] = [];
-
-        if (isOwnKey(ins, "_middleware")) {
-            // If the controller isn't a subclass of ApiController,
-            // `_middleware` could be missing.
-            middleware.push(...ins._middleware);
-        }
-
-        if (isOwnKey(this, Symbol.for("middleware"))) {
-            // If `@use` has never been used on the controller,
-            // `this[Symbol.for("middleware")]` could be missing.
-            middleware.push(...(this[Symbol.for("middleware")][method] || []));
-        }
-
-        // Use the request handler method as a middleware.
-        middleware.push(async (req, res) => {
+        const invoke = ins.invoke || ApiController.prototype.invoke;
+        await invoke.call(ins, method, req, res, async (req, res) => {
             try {
                 let returns: any;
 
@@ -145,14 +131,37 @@ export default class ApiController {
                 throw err;
             }
         });
+    }
+
+    protected async invoke(
+        method: string,
+        req: IncomingMessage,
+        res: ServerResponse,
+        handle: (req: IncomingMessage, res: ServerResponse) => Promise<any>
+    ) {
+        const middleware: Middleware[] = [];
+
+        if (isOwnKey(this, "_middleware")) {
+            // If the controller isn't a subclass of ApiController,
+            // `_middleware` could be missing.
+            middleware.push(...this["_middleware"]);
+        }
+
+        if (isOwnKey(this.constructor, Symbol.for("middleware"))) {
+            // If `@use` has never been used on the controller,
+            // `this[Symbol.for("middleware")]` could be missing.
+            middleware.push(...(this.constructor[Symbol.for("middleware")][method] || []));
+        }
+
+        middleware.push(handle);
 
         try {
-            await applyMiddleware.call(ins, middleware, req, res);
+            await applyMiddleware.call(this, middleware, req, res);
         } catch (err) {
-            if (typeof ins.onError === "function") {
-                ins.onError(err);
-            } else if (typeof this.onError === "function") {
+            if (typeof this.onError === "function") {
                 this.onError(err);
+            } else if (typeof (this.constructor as any).onError === "function") {
+                (this.constructor as any).onError(err);
             } else if (err["name"] !== "HttpException") {
                 throw err;
             }
@@ -161,10 +170,12 @@ export default class ApiController {
 }
 
 async function applyMiddleware(
+    this: any,
     middleware: Middleware[],
     req: IncomingMessage,
     res: ServerResponse,
 ) {
+    let _this = this;
     let i = 0;
 
     // Recursively invokes all the middleware.
@@ -179,9 +190,9 @@ async function applyMiddleware(
         const handle = middleware[i++];
 
         if (handle?.length === 4) { // Express `(err, req, res, next) => void`
-            return await handle.call(void 0, null, req, res, next);
+            return await handle.call(_this, null, req, res, next);
         } else if (handle) {
-            return await handle(req, res, next);
+            return await handle.call(_this, req, res, next);
         }
     })();
 }
