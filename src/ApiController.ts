@@ -158,13 +158,17 @@ export default class ApiController {
         try {
             await applyMiddleware.call(this, middleware, req, res);
         } catch (err) {
-            if (typeof this.onError === "function") {
-                this.onError(err);
-            } else if (typeof (this.constructor as any).onError === "function") {
-                (this.constructor as any).onError(err);
-            } else if (err["name"] !== "HttpException") {
-                throw err;
-            }
+            this._handleError(err);
+        }
+    }
+
+    private _handleError(err: any) {
+        if (typeof this.onError === "function") {
+            this.onError(err);
+        } else if (typeof (this.constructor as any).onError === "function") {
+            (this.constructor as any).onError(err);
+        } else if (err["name"] !== "HttpException") {
+            console.error(err);
         }
     }
 }
@@ -184,7 +188,8 @@ async function applyMiddleware(
         if (arguments.length &&
             (arguments[0] instanceof Error || typeof arguments[0] === "string")
         ) {
-            throw arguments[0];
+            _this._handleError?.(arguments[0]);
+            return;
         }
 
         const handle = middleware[i++];
