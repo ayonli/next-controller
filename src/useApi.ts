@@ -29,7 +29,8 @@ async function callApi(
     body = void 0,
     extraHeaders: HeadersInit = {}
 ) {
-    const { method, headers = {} } = options;
+    const { method } = options;
+    const headers = { ...(options.headers ?? {}) };
 
     url += qs.stringify(query, {
         allowDots: true,
