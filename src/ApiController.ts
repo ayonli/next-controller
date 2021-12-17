@@ -150,16 +150,48 @@ export default class ApiController {
         if (isOwnKey(this.constructor, Symbol.for("middleware"))) {
             // If `@use` has never been used on the controller,
             // `this[Symbol.for("middleware")]` could be missing.
-            middleware.push(...(this.constructor[Symbol.for("middleware")][method] || []));
+            middleware.push(
+                ...(this.constructor[Symbol.for("middleware")][method] || [])
+            );
         }
 
         middleware.push(handle);
 
         try {
+            const applyMiddleware = this.applyMiddleware
+                || ApiController.prototype.applyMiddleware;
             await applyMiddleware.call(this, middleware, req, res);
         } catch (err) {
             this._handleError(err);
         }
+    }
+
+    protected async applyMiddleware(
+        middleware: Middleware[],
+        req: IncomingMessage,
+        res: ServerResponse,
+    ) {
+        let _this = this;
+        let i = 0;
+
+        // Recursively invokes all the middleware.
+        await (async function next() {
+            // Express `next(err)`
+            if (arguments.length &&
+                (arguments[0] instanceof Error || typeof arguments[0] === "string")
+            ) {
+                _this._handleError?.(arguments[0]);
+                return;
+            }
+
+            const handle = middleware[i++];
+
+            if (handle?.length === 4) { // Express `(err, req, res, next) => void`
+                return await handle.call(_this, null, req, res, next);
+            } else if (handle) {
+                return await handle.call(_this, req, res, next);
+            }
+        })();
     }
 
     private _handleError(err: any) {
@@ -171,33 +203,4 @@ export default class ApiController {
             console.error(err);
         }
     }
-}
-
-async function applyMiddleware(
-    this: any,
-    middleware: Middleware[],
-    req: IncomingMessage,
-    res: ServerResponse,
-) {
-    let _this = this;
-    let i = 0;
-
-    // Recursively invokes all the middleware.
-    await (async function next() {
-        // Express `next(err)`
-        if (arguments.length &&
-            (arguments[0] instanceof Error || typeof arguments[0] === "string")
-        ) {
-            _this._handleError?.(arguments[0]);
-            return;
-        }
-
-        const handle = middleware[i++];
-
-        if (handle?.length === 4) { // Express `(err, req, res, next) => void`
-            return await handle.call(_this, null, req, res, next);
-        } else if (handle) {
-            return await handle.call(_this, req, res, next);
-        }
-    })();
 }
