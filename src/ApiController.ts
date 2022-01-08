@@ -34,15 +34,17 @@ export default class ApiController {
     static onError?(err: any): void;
 
     static async __invoke(req: IncomingMessage, res: ServerResponse) {
-        let query: object;
+        const url = new URL(req.url, "http://localhost");
+        const query: object = qs.parse(url.search?.slice(1) || "", {
+            ignoreQueryPrefix: true,
+            allowDots: true,
+            strictNullHandling: true,
+        });
 
-        if (!query) {
-            let url = new URL(req.url, "http://localhost");
-            query = req["query"] = qs.parse(url.search?.slice(1) || "", {
-                ignoreQueryPrefix: true,
-                allowDots: true,
-                strictNullHandling: true,
-            });
+        if (req["query"]) {
+            Object.assign(req["query"], query);
+        } else {
+            req["query"] = query;
         }
 
         const ins = new this(req, res);
@@ -62,11 +64,11 @@ export default class ApiController {
 
                 // Invoke the handler method can get its returning value.
                 if (method === "get" || method === "head") {
-                    returns = await ins[method](query);
+                    returns = await ins[method](req["query"]);
                 } else if (method === "post") {
                     returns = await ins[method](req["body"]);
                 } else {
-                    returns = await ins[method](query, req["body"]);
+                    returns = await ins[method](req["query"], req["body"]);
                 }
 
                 if (method === "head") {

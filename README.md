@@ -115,7 +115,8 @@ declare interface ApiController {
 Note: all these methods are intended to handle corresponding http request types
 straight forward, so their signatures only contain those properties that are
 absolutely necessary, for other properties, e.g. `params` (and `query` in post),
-must be accessed via the `req` object.
+must be accessed via the `req` object. (*The default Next.js server patches*
+*route params directly to the `query` object.*)
 
 ## Middleware Support
 
