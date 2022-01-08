@@ -80,8 +80,10 @@ async function callApi(
             const disposition = res.headers.get("Content-Disposition") ?? "";
 
             if (disposition.startsWith("attachment")) {
-                const filename = disposition.match(/filename="(.+)"/)?.[1];
-                saveAs(returns, filename);
+                const filename = disposition.match(/filename\*=UTF-?8''(.+)/i)?.[1]
+                    ?? disposition.match(/filename="(.+)"/)?.[1];
+
+                saveAs(returns, filename ? decodeURIComponent(filename) : null);
                 returns = void 0;
             }
         }
