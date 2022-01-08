@@ -1,5 +1,6 @@
 import * as qs from "qs";
 import HttpException from "./HttpException";
+import { saveAs } from "file-saver";
 
 // polyfill
 Error.captureStackTrace ??= require("capture-stack-trace");
@@ -66,12 +67,23 @@ async function callApi(
     let err: Error;
 
     if (res.status < 400) {
+        const type = res.headers.get("Content-Type") ?? "";
         let returns: any;
 
-        if (res.headers.get("Content-Type")?.includes("json")) {
+        if (type.includes("/json")) {
             returns = await res.json();
-        } else {
+        } else if (type.startsWith("text/")) {
             returns = await res.text();
+        } else {
+            returns = await res.blob();
+
+            const disposition = res.headers.get("Content-Disposition") ?? "";
+
+            if (disposition.startsWith("attachment")) {
+                const filename = disposition.match(/filename="(.+)"/)?.[1];
+                saveAs(returns, filename);
+                returns = void 0;
+            }
         }
 
         return returns;
