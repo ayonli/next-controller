@@ -15,8 +15,18 @@ export default class HttpException extends Error {
 
         super(message);
 
-        Object.defineProperty(this, "name", { value: "HttpException" });
-        Object.defineProperty(this, "code", { value: code });
+        Object.defineProperties(this, {
+            name: {
+                value: "HttpException",
+                configurable: true,
+                writable: true,
+            },
+            code: {
+                value: code,
+                configurable: true,
+                writable: true,
+            }
+        });
     }
 
     static from(err: string | Error) {
@@ -24,10 +34,26 @@ export default class HttpException extends Error {
             const _err = Object.create(HttpException.prototype);
 
             Object.defineProperties(_err, {
-                name: { value: "HttpException" },
-                code: { value: err.code },
-                message: { value: err.message },
-                stack: { value: err.stack }
+                name: {
+                    value: "HttpException",
+                    configurable: true,
+                    writable: true,
+                },
+                code: {
+                    value: err.code,
+                    configurable: true,
+                    writable: true,
+                },
+                message: {
+                    value: err.message,
+                    configurable: true,
+                    writable: true,
+                },
+                stack: {
+                    value: err.stack,
+                    configurable: true,
+                    writable: true,
+                }
             });
 
             return _err;
