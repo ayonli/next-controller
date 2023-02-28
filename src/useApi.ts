@@ -10,7 +10,7 @@ export default function useApi<T>(
     base = "",
     options: Omit<RequestInit, "method" | "body"> = {}
 ): T {
-    const url = base + "/api/" + path;
+    const url = (base || "") + "/api/" + path;
 
     return {
         delete: callApi.bind(void 0, url, { ...options, method: "DELETE" }),
