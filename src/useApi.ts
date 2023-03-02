@@ -23,7 +23,7 @@ export default function useApi<T>(
     } as any;
 }
 
-async function callApi(
+export async function callApi(
     url: string,
     options: Omit<RequestInit, "body"> = {},
     query: object,
