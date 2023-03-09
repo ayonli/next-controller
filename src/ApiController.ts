@@ -6,7 +6,7 @@ import { HttpStatus } from "./HttpException";
 export type Middleware = (
     req: IncomingMessage,
     res: ServerResponse,
-    next: () => any
+    next: (err?: any) => Promise<any>
 ) => any;
 
 export default class ApiController {
