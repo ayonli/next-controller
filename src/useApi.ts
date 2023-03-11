@@ -46,7 +46,11 @@ export async function callApi(
     }
 
     if (typeof body === "object") {
-        if (typeof FormData !== "function" || !(body instanceof FormData)) {
+        if ((typeof FormData !== "function" || !(body instanceof FormData)) &&
+            (typeof Blob !== "function" || !(body instanceof Blob)) &&
+            (typeof ArrayBuffer !== "function" || !(body instanceof ArrayBuffer)) &&
+            (typeof Uint8Array !== "function" || !(body instanceof Uint8Array))
+        ) {
             headers["Content-Type"] ||= "application/json; charset=utf-8";
             body = JSON.stringify(body);
         }
@@ -75,16 +79,17 @@ export async function callApi(
         } else if (type.startsWith("text/")) {
             returns = await res.text();
         } else {
-            returns = await res.blob();
-
             const disposition = res.headers.get("Content-Disposition") ?? "";
 
             if (disposition.startsWith("attachment")) {
+                returns = await res.blob();
                 const filename = disposition.match(/filename\*=UTF-?8''(.+)/i)?.[1]
                     ?? disposition.match(/filename="(.+)"/)?.[1];
 
                 saveAs(returns, filename ? decodeURIComponent(filename) : null);
                 returns = void 0;
+            } else {
+                returns = await res.arrayBuffer();
             }
         }
 
