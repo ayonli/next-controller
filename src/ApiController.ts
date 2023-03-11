@@ -17,7 +17,7 @@ export default class ApiController {
         protected res: ServerResponse
     ) { }
 
-    use(middleware: Middleware) {
+    protected use(middleware: Middleware) {
         this._middleware.push(middleware);
         return this;
     }
@@ -29,7 +29,7 @@ export default class ApiController {
     patch?(query: object, body: any): Promise<any>;
     post?(body: any): Promise<any>;
     put?(query: object, body: any): Promise<any>;
-    onError?(err: any): void;
+    protected onError?(err: any): void;
 
     static onError?(err: any): void;
 
