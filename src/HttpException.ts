@@ -1,32 +1,30 @@
-export default class HttpException extends Error {
-    code: number;
+import Exception from "@ayonli/jsext/error/Exception";
 
+export default class HttpException extends Exception {
     constructor(code: number);
     constructor(message: string, code: number);
-    constructor(status: string | number, code?: number) {
+    constructor(message: string, options: {
+        code: number;
+        cause?: unknown;
+    });
+    constructor(status: string | number, code?: number | {
+        code: number;
+        cause?: unknown;
+    }) {
         let message: string;
 
         if (typeof status === "number") {
             code = status;
-            message = HttpStatus[code];
+            message = HttpStatus[code] || "";
         } else {
             message = status;
         }
 
-        super(message);
-
-        Object.defineProperties(this, {
-            name: {
-                value: "HttpException",
-                configurable: true,
-                writable: true,
-            },
-            code: {
-                value: code,
-                configurable: true,
-                writable: true,
-            }
-        });
+        if (typeof code === "number") {
+            super(message, code);
+        } else if (typeof code === "object") {
+            super(message, code);
+        }
     }
 
     static from(err: string | Error) {
@@ -36,6 +34,11 @@ export default class HttpException extends Error {
             Object.defineProperties(_err, {
                 name: {
                     value: "HttpException",
+                    configurable: true,
+                    writable: true,
+                },
+                cause: {
+                    value: _err.cause,
                     configurable: true,
                     writable: true,
                 },
@@ -53,19 +56,22 @@ export default class HttpException extends Error {
                     value: err.stack,
                     configurable: true,
                     writable: true,
-                }
+                },
             });
 
             return _err;
         } else if (err instanceof Error) {
-            return new HttpException(err.message, 500);
+            return new HttpException(err.message, {
+                code: 500,
+                cause: err,
+            });
         } else {
             return new HttpException(String(err), 500);
         }
     }
 }
 
-export const HttpStatus = {
+export const HttpStatus: { [code: number]: string } = {
     100: 'Continue',
     101: 'Switching Protocols',
     102: 'Processing',

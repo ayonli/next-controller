@@ -1,7 +1,9 @@
 import { applyMagic } from "js-magic";
 import ApiController from "./ApiController";
+import { Constructor } from "@ayonli/jsext";
 
-const api: ClassDecorator = (target) => {
+const api = <T extends Constructor<any>>(target: T, ..._: any[]) => {
+    // @ts-ignore
     target["__invoke"] ||= ApiController.__invoke;
     return applyMagic(target);
 };

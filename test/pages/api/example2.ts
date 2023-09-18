@@ -1,6 +1,5 @@
-import { api, use } from "../../../..";
+import { api, use, HttpException } from "../../../src";
 import * as bodyParser from "body-parser";
-import { HttpException } from "../../../..";
 
 const jsonParser = bodyParser.json();
 const urlencodedParser = bodyParser.urlencoded({ extended: true });
@@ -21,7 +20,7 @@ export default class ExampleController {
         };
     }
 
-    async delete(query: { foo: string; }) {
+    async delete(_: { foo: string; }) {
         throw new HttpException("Something went wrong", 400);
     }
 }

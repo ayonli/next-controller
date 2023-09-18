@@ -18,7 +18,7 @@ export default function useApi<T>(
         head: callApi.bind(void 0, url, { ...options, method: "HEAD" }),
         options: callApi.bind(void 0, url, { ...options, method: "OPTIONS" }),
         patch: callApi.bind(void 0, url, { ...options, method: "PATCH" }),
-        post: callApi.bind(void 0, url, { ...options, method: "POST" }, null),
+        post: callApi.bind(void 0, url, { ...options, method: "POST" }, {}),
         put: callApi.bind(void 0, url, { ...options, method: "PUT" })
     } as any;
 }
@@ -27,11 +27,11 @@ export async function callApi(
     url: string,
     options: Omit<RequestInit, "body"> = {},
     query: object,
-    body = void 0,
+    body: any = void 0,
     extraHeaders: HeadersInit = {}
 ) {
     const { method } = options;
-    const headers = { ...(options.headers ?? {}) };
+    const headers = { ...(options.headers ?? {}) } as { [x: string]: any; };
 
     url += qs.stringify(query, {
         allowDots: true,
@@ -40,7 +40,7 @@ export async function callApi(
         strictNullHandling: true,
     });
 
-    if (["GET", "HEAD", "OPTIONS"].includes(method) && body) {
+    if (method && ["GET", "HEAD", "OPTIONS"].includes(method) && body) {
         extraHeaders = body;
         body = void 0;
     }
@@ -86,7 +86,7 @@ export async function callApi(
                 const filename = disposition.match(/filename\*=UTF-?8''(.+)/i)?.[1]
                     ?? disposition.match(/filename="(.+)"/)?.[1];
 
-                saveAs(returns, filename ? decodeURIComponent(filename) : null);
+                saveAs(returns, filename ? decodeURIComponent(filename) : void 0);
                 returns = void 0;
             } else {
                 returns = await res.arrayBuffer();
@@ -96,7 +96,7 @@ export async function callApi(
         return returns;
     } else if (res.status === 405) {
         err = new ReferenceError(
-            `ApiController.${method.toLowerCase()} is not implemented`);
+            `ApiController.${String(method).toLowerCase()} is not implemented`);
     } else {
         err = new HttpException(
             (await res.text()) || res.statusText || "Unknown",
@@ -104,7 +104,7 @@ export async function callApi(
     }
 
     // Append stack trace
-    err.stack = err.stack + "\n" + trace.stack.split("\n").slice(5).join("\n");
+    err.stack = err.stack + "\n" + trace.stack?.split("\n").slice(5).join("\n");
 
     throw err;
 }

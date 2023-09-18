@@ -30,12 +30,6 @@ run-time, but not like a regular function, it's all object-oriented.
 npm i next-controller
 ```
 
-### YARN
-
-```sh
-yarn add next-controller
-```
-
 ## Pre-configuration
 
 To use this package, we will need to configure our project a little bit so that

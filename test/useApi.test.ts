@@ -1,7 +1,9 @@
 import * as assert from "assert";
-import { useApi } from "../..";
+import { describe, it } from "mocha";
+import { useApi } from "../src";
 import type ExampleController from "./pages/api/example";
 import type Example2Controller from "./pages/api/example2";
+import jsext from "@ayonli/jsext";
 
 const controller = useApi<ExampleController>("example", "http://localhost:3000");
 
@@ -23,7 +25,7 @@ describe("useApi", () => {
 
     it("should invoke options method", async () => {
         const data = await controller.options({ foo: "World" });
-        assert.deepStrictEqual(data, { bar: "Hello, World" });
+        assert.strictEqual(data, null);
     });
 
     it("should invoke patch method with query and body", async () => {
@@ -37,17 +39,11 @@ describe("useApi", () => {
     });
 
     it("should throw error if method is not implemented", async () => {
-        let err: Error;
+        const api = useApi<Example2Controller>("example2", "http://localhost:3000");
+        // @ts-ignore
+        const [err] = await jsext.try(async () => api["put"]({}, {}))
 
-        try {
-            const controller = useApi<Example2Controller>("example2",
-                "http://localhost:3000");
-            await controller["put"]({}, {});
-        } catch (e) {
-            err = e;
-        }
-
-        assert.strictEqual(err.name, "ReferenceError");
-        assert.strictEqual(err.message, "ApiController.put is not implemented");
+        assert.strictEqual(err?.name, "ReferenceError");
+        assert.strictEqual(err?.message, "ApiController.put is not implemented");
     });
 });

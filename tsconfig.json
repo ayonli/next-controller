@@ -2,19 +2,22 @@
     "compilerOptions": {
         "module": "commonjs",
         "target": "es2017",
-        "preserveConstEnums": true,
         "rootDir": "src/",
         "outDir": "dist/",
-        "experimentalDecorators": true,
         "newLine": "LF",
+        "importHelpers": true,
+        "sourceMap": true,
+        "strict": true,
         "noUnusedParameters": true,
         "noUnusedLocals": true,
-        "importHelpers": true,
-        "pretty": true,
-        "removeComments": true,
-        "sourceMap": true,
+        "noImplicitAny": true,
         "noImplicitThis": true,
-        "declaration": true,
+        "noImplicitOverride": true,
+        "noImplicitReturns": true,
+        "noFallthroughCasesInSwitch": true,
+        "noPropertyAccessFromIndexSignature": true,
+        "noUncheckedIndexedAccess": true,
+        "experimentalDecorators": true,
         "lib": [
             "ES2017",
             "DOM"
@@ -24,7 +27,6 @@
         "./src/index.ts"
     ],
     "exclude": [
-        "./test/*",
         "./node_modules/*"
     ]
 }

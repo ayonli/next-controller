@@ -1,13 +1,25 @@
 import * as qs from "qs";
 import type { IncomingMessage, ServerResponse } from "http";
-import isOwnKey from "@hyurl/utils/isOwnKey";
-import { HttpStatus } from "./HttpException";
+import { as, hasOwn } from "@ayonli/jsext/object";
+import HttpException, { HttpStatus } from "./HttpException";
+import { Constructor } from "@ayonli/jsext";
+
+export const _middleware = Symbol.for("middleware");
 
 export type Middleware = (
     req: IncomingMessage,
     res: ServerResponse,
     next: (err?: any) => Promise<any>
 ) => any;
+
+export interface Request extends IncomingMessage {
+    query?: qs.ParsedQs;
+    body?: any;
+}
+
+export interface Response extends ServerResponse {
+    send?: (data: any) => any;
+}
 
 export default class ApiController {
     private _middleware: Middleware[] = [];
@@ -33,26 +45,26 @@ export default class ApiController {
 
     static onError?(err: any): void;
 
-    static async __invoke(req: IncomingMessage, res: ServerResponse) {
-        const url = new URL(req.url, "http://localhost");
-        const query: object = qs.parse(url.search?.slice(1) || "", {
+    static async __invoke(req: Request, res: Response) {
+        const url = new URL(req.url as string, "http://localhost");
+        const query = qs.parse(url.search?.slice(1) || "", {
             ignoreQueryPrefix: true,
             allowDots: true,
             strictNullHandling: true,
         });
 
-        if (req["query"]) {
-            Object.assign(req["query"], query);
+        if (req.query) {
+            Object.assign(req.query, query);
         } else {
-            req["query"] = query;
+            req.query = query;
         }
 
         const ins = new this(req, res);
-        const method = req.method.toLowerCase();
+        const method = (req.method as string).toLowerCase();
 
-        if (typeof ins[method] !== "function") {
+        if (typeof (ins as any)[method] !== "function") {
             res.statusCode = 405;
-            res.statusMessage = HttpStatus[405];
+            res.statusMessage = HttpStatus[405] || "";
             res.end(res.statusMessage);
             return;
         }
@@ -64,11 +76,11 @@ export default class ApiController {
 
                 // Invoke the handler method can get its returning value.
                 if (method === "get" || method === "head") {
-                    returns = await ins[method](req["query"]);
+                    returns = await (ins as any)[method](req.query);
                 } else if (method === "post") {
-                    returns = await ins[method](req["body"]);
+                    returns = await (ins as any)[method](req.body);
                 } else {
-                    returns = await ins[method](req["query"], req["body"]);
+                    returns = await (ins as any)[method](req.query, req.body);
                 }
 
                 if (method === "head") {
@@ -115,16 +127,16 @@ export default class ApiController {
 
                 if (err instanceof Error) {
                     if (err.name === "HttpException") {
-                        res.statusCode = Number(err["code"]) || 500;
+                        res.statusCode = as(err, HttpException)?.code || 500;
                     } else {
                         res.statusCode = 500;
                     }
 
-                    res.statusMessage = HttpStatus[res.statusCode];
+                    res.statusMessage = HttpStatus[res.statusCode] ?? "";
                     res.end(err.message);
                 } else {
                     res.statusCode = 500;
-                    res.statusMessage = HttpStatus[res.statusCode];
+                    res.statusMessage = HttpStatus[res.statusCode] ?? "";
                     res.end(String(err));
                 }
 
@@ -137,24 +149,21 @@ export default class ApiController {
 
     protected async invoke(
         method: string,
-        req: IncomingMessage,
-        res: ServerResponse,
-        handle: (req: IncomingMessage, res: ServerResponse) => Promise<any>
+        req: Request,
+        res: Response,
+        handle: (req: Request, res: Response) => Promise<any>
     ) {
+        const ctor = this.constructor as Constructor<any>;
         const middleware: Middleware[] = [];
 
-        if (isOwnKey(this, "_middleware")) {
+        if (hasOwn(this, "_middleware")) {
             // If the controller isn't a subclass of ApiController,
             // `_middleware` could be missing.
             middleware.push(...this["_middleware"]);
         }
 
-        if (isOwnKey(this.constructor, Symbol.for("middleware"))) {
-            // If `@use` has never been used on the controller,
-            // `this[Symbol.for("middleware")]` could be missing.
-            middleware.push(
-                ...(this.constructor[Symbol.for("middleware")][method] || [])
-            );
+        if (hasOwn(ctor.prototype[method], _middleware)) {
+            middleware.push(...(ctor.prototype[method][_middleware] || []));
         }
 
         middleware.push(handle);
@@ -164,7 +173,8 @@ export default class ApiController {
                 || ApiController.prototype.applyMiddleware;
             await applyMiddleware.call(this, middleware, req, res);
         } catch (err) {
-            this._handleError(err);
+            console.log(err);
+            this._handleError?.(err);
         }
     }
 
@@ -189,6 +199,7 @@ export default class ApiController {
             const handle = middleware[i++];
 
             if (handle?.length === 4) { // Express `(err, req, res, next) => void`
+                // @ts-ignore
                 return await handle.call(_this, null, req, res, next);
             } else if (handle) {
                 return await handle.call(_this, req, res, next);
