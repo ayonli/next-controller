@@ -1,6 +1,6 @@
 {
   "name": "next-controller",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "Elegant API/MVC controller wrapper for Next.js framework.",
   "main": "dist/index.js",
   "types": "src/index.ts",
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hyurl/next-controller.git"
+    "url": "git+https://github.com/ayonli/next-controller.git"
   },
   "keywords": [
     "next.js",
@@ -20,12 +20,12 @@
     "mvc",
     "middleware"
   ],
-  "author": "A-yon <i@hyurl.com>",
+  "author": "A-yon <the@ayon.li>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/hyurl/next-controller/issues"
+    "url": "https://github.com/ayonli/next-controller/issues"
   },
-  "homepage": "https://github.com/hyurl/next-controller#readme",
+  "homepage": "https://github.com/ayonli/next-controller#readme",
   "dependencies": {
     "@ayonli/jsext": "^0.4.4",
     "@types/qs": "^6.9.5",
