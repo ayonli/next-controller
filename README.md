@@ -30,26 +30,11 @@ run-time, but not like a regular function, it's all object-oriented.
 npm i next-controller
 ```
 
-## Pre-configuration
+## Prerequisite
 
-To use this package, we will need to configure our project a little bit so that
-to support TypeScript decorators. Create a `.babelrc` file in the project's
-working directory, and put the following content in it.
-
-```json
-{
-    "presets": [
-        "next/babel",
-        "@babel/preset-typescript"
-    ],
-    "plugins": [
-        [ "@babel/plugin-proposal-decorators", { "legacy": true } ]
-    ]
-}
-```
-
-Then use the command `npm i -D @babel/plugin-proposal-decorators` to install the
-plugin as a development dependency.
+- Node.js v14+
+- TypeScript v5+
+- In `tsconfig.json`, set `compilerOptions.module` to `NodeNext`.
 
 ## Example
 
