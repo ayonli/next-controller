@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
-        "module": "commonjs",
-        "target": "es2017",
+        "module": "NodeNext",
+        "target": "ES2018",
         "rootDir": "src/",
         "outDir": "dist/",
         "newLine": "LF",
@@ -17,16 +17,17 @@
         "noFallthroughCasesInSwitch": true,
         "noPropertyAccessFromIndexSignature": true,
         "noUncheckedIndexedAccess": true,
-        "experimentalDecorators": true,
-        "lib": [
-            "ES2017",
-            "DOM"
-        ]
+        "experimentalDecorators": true
     },
     "files": [
         "./src/index.ts"
     ],
     "exclude": [
         "./node_modules/*"
-    ]
+    ],
+    "ts-node": {
+        "compilerOptions": {
+            "module": "CommonJS"
+        }
+    }
 }

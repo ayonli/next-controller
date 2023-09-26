@@ -1,8 +1,8 @@
 import * as qs from "qs";
 import type { IncomingMessage, ServerResponse } from "http";
 import { as, hasOwn } from "@ayonli/jsext/object";
+import type { Constructor } from "@ayonli/jsext";
 import HttpException, { HttpStatus } from "./HttpException";
-import { Constructor } from "@ayonli/jsext";
 
 export const _middleware = Symbol.for("middleware");
 
@@ -173,7 +173,6 @@ export default class ApiController {
                 || ApiController.prototype.applyMiddleware;
             await applyMiddleware.call(this, middleware, req, res);
         } catch (err) {
-            console.log(err);
             this._handleError?.(err);
         }
     }

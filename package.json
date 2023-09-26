@@ -1,6 +1,6 @@
 {
   "name": "next-controller",
-  "version": "1.6.1",
+  "version": "1.7.0",
   "description": "Elegant API/MVC controller wrapper for Next.js framework.",
   "main": "dist/index.js",
   "types": "src/index.ts",
@@ -27,12 +27,12 @@
   },
   "homepage": "https://github.com/ayonli/next-controller#readme",
   "dependencies": {
-    "@ayonli/jsext": "^0.4.4",
+    "@ayonli/jsext": "^0.5.5",
     "@types/qs": "^6.9.5",
-    "capture-stack-trace": "^1.0.1",
+    "capture-stack-trace": "^2.1.0",
     "file-saver": "^2.0.5",
-    "js-magic": "^1.4.0",
-    "qs": "^6.9.6"
+    "js-magic": "^1.4.2",
+    "qs": "^6.11.2"
   },
   "devDependencies": {
     "@types/body-parser": "^1.19.0",
@@ -46,6 +46,6 @@
     "node-fetch": "^2.7.0",
     "ts-node": "^10.9.1",
     "tslib": "^2.6.2",
-    "typescript": "^4.9.5"
+    "typescript": "^5.2.2"
   }
 }

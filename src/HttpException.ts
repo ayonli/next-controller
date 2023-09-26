@@ -71,7 +71,13 @@ export default class HttpException extends Exception {
     }
 }
 
-export const HttpStatus: { [code: number]: string } = {
+Object.defineProperty(HttpException.prototype, "name", {
+    value: "HttpException",
+    configurable: true,
+    writable: true,
+});
+
+export const HttpStatus: { [code: number]: string; } = {
     100: 'Continue',
     101: 'Switching Protocols',
     102: 'Processing',
