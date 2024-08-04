@@ -1,7 +1,7 @@
 import * as qs from "qs";
-import type { IncomingMessage, ServerResponse } from "http";
-import { as, hasOwn } from "@ayonli/jsext/object";
+import type { IncomingMessage, ServerResponse } from "node:http";
 import type { Constructor } from "@ayonli/jsext";
+import { as, hasOwn } from "@ayonli/jsext/object";
 import HttpException, { HttpStatus } from "./HttpException";
 
 export const _middleware = Symbol.for("middleware");

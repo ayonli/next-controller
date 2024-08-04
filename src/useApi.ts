@@ -1,6 +1,6 @@
 import * as qs from "qs";
+import { saveFile } from "@ayonli/jsext/dialog";
 import HttpException from "./HttpException";
-import { saveAs } from "file-saver";
 
 // polyfill
 Error.captureStackTrace ??= require("capture-stack-trace");
@@ -86,7 +86,9 @@ export async function callApi(
                 const filename = disposition.match(/filename\*=UTF-?8''(.+)/i)?.[1]
                     ?? disposition.match(/filename="(.+)"/)?.[1];
 
-                saveAs(returns, filename ? decodeURIComponent(filename) : void 0);
+                saveFile(returns as Blob, {
+                    name: filename ? decodeURIComponent(filename) : void 0,
+                });
                 returns = void 0;
             } else {
                 returns = await res.arrayBuffer();

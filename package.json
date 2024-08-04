@@ -1,51 +1,50 @@
 {
-  "name": "next-controller",
-  "version": "1.7.0",
-  "description": "Elegant API/MVC controller wrapper for Next.js framework.",
-  "main": "dist/index.js",
-  "types": "src/index.ts",
-  "scripts": {
-    "prepublishOnly": "tsc",
-    "test": "mocha -r ts-node/register test/*.test.ts",
-    "test:bun": "bun run ./node_modules/mocha/bin/mocha test/*.test.ts"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ayonli/next-controller.git"
-  },
-  "keywords": [
-    "next.js",
-    "api",
-    "controller",
-    "mvc",
-    "middleware"
-  ],
-  "author": "A-yon <the@ayon.li>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/ayonli/next-controller/issues"
-  },
-  "homepage": "https://github.com/ayonli/next-controller#readme",
-  "dependencies": {
-    "@ayonli/jsext": "^0.5.5",
-    "@types/qs": "^6.9.5",
-    "capture-stack-trace": "^2.1.0",
-    "file-saver": "^2.0.5",
-    "js-magic": "^1.4.2",
-    "qs": "^6.11.2"
-  },
-  "devDependencies": {
-    "@types/body-parser": "^1.19.0",
-    "@types/file-saver": "^2.0.4",
-    "@types/mocha": "^10.0.1",
-    "@types/node": "^18.14.4",
-    "@types/node-fetch": "^2.5.8",
-    "axios": "^0.21.4",
-    "body-parser": "^1.19.0",
-    "mocha": "^10.2.0",
-    "node-fetch": "^2.7.0",
-    "ts-node": "^10.9.1",
-    "tslib": "^2.6.2",
-    "typescript": "^5.2.2"
-  }
+    "name": "next-controller",
+    "version": "1.7.1",
+    "description": "Elegant API/MVC controller wrapper for Next.js framework.",
+    "main": "dist/index.js",
+    "types": "src/index.ts",
+    "scripts": {
+        "prepublishOnly": "tsc",
+        "test": "mocha -r ts-node/register test/*.test.ts",
+        "test:bun": "bun run ./node_modules/mocha/bin/mocha test/*.test.ts"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ayonli/next-controller.git"
+    },
+    "keywords": [
+        "next.js",
+        "api",
+        "controller",
+        "mvc",
+        "middleware"
+    ],
+    "author": "A-yon <the@ayon.li>",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/ayonli/next-controller/issues"
+    },
+    "homepage": "https://github.com/ayonli/next-controller#readme",
+    "dependencies": {
+        "@ayonli/jsext": "^0.9.55",
+        "@types/qs": "^6.9.5",
+        "capture-stack-trace": "^2.1.0",
+        "js-magic": "^1.4.2",
+        "qs": "^6.11.2"
+    },
+    "devDependencies": {
+        "@types/body-parser": "^1.19.0",
+        "@types/file-saver": "^2.0.4",
+        "@types/mocha": "^10.0.1",
+        "@types/node": "^22.1.0",
+        "@types/node-fetch": "^2.5.8",
+        "axios": "^0.21.4",
+        "body-parser": "^1.19.0",
+        "mocha": "^10.2.0",
+        "node-fetch": "^2.7.0",
+        "ts-node": "^10.9.1",
+        "tslib": "^2.6.2",
+        "typescript": "^5.2.2"
+    }
 }

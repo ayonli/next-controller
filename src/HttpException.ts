@@ -1,4 +1,4 @@
-import Exception from "@ayonli/jsext/error/Exception";
+import { Exception } from "@ayonli/jsext/error";
 
 export default class HttpException extends Exception {
     constructor(code: number);
