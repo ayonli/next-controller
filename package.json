@@ -1,6 +1,6 @@
 {
     "name": "next-controller",
-    "version": "1.7.3",
+    "version": "1.7.4",
     "description": "Elegant API/MVC controller wrapper for Next.js framework.",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
@@ -27,7 +27,7 @@
     },
     "homepage": "https://github.com/ayonli/next-controller#readme",
     "dependencies": {
-        "@ayonli/jsext": "^0.9.55",
+        "@ayonli/jsext": "^0.9.56",
         "capture-stack-trace": "^2.1.0",
         "js-magic": "^1.4.2",
         "qs": "^6.11.2"
