@@ -5,6 +5,7 @@
         "rootDir": "src/",
         "outDir": "dist/",
         "newLine": "LF",
+        "declaration": true,
         "importHelpers": true,
         "sourceMap": true,
         "strict": true,
